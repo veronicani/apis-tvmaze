@@ -3,6 +3,7 @@
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
+const BASE_URL = 'http://api.tvmaze.com/';
 
 
 /** Given a search term, search for tv shows that match that query.
@@ -15,6 +16,12 @@ const $searchForm = $("#searchForm");
 async function getShowsByTerm( /* term */) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
 
+  //http://api.tvmaze.com/search/shows?q=[searchquery] << format to take input from user
+  
+  
+  //fetch the show, passing in url, make sure to reformat 
+  //should return array of objects [{id: , name: , summary: , image: }];
+  
   return [
     {
       id: 1767,
@@ -91,6 +98,8 @@ $searchForm.on("submit", async function handleSearchForm (evt) {
  */
 
 // async function getEpisodesOfShow(id) { }
+// http://api.tvmaze.com/shows/[showid]/episodes << GET request 
+
 
 /** Write a clear docstring for this function... */
 
