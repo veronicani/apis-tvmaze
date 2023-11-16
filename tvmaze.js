@@ -12,7 +12,7 @@ const BASE_URL = 'http://api.tvmaze.com/';
  *    Each show object should contain exactly: {id, name, summary, image}
  *    (if no image URL given by API, put in a default image URL)
  */
-
+//TODO: Rename param as WHAT the param is in this case, such as searchTerm
 async function getShowsByTerm(searchInput) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
 
@@ -27,7 +27,12 @@ async function getShowsByTerm(searchInput) {
 
   let searchData = await response.json();
 
-  //TODO: How to handle other properties that don't have any inputs
+  /**TODO: How to handle other properties that don't have any inputs
+   * Also new name for the parameter within the map function callback
+   * Can make the image url a global constant
+   * Can make object definition within map idiom by using destructuring (see
+   * commented out code starting this)
+  */
 
   const filteredShows =   searchData.map((show) => {
     const filteredShow = {};
@@ -49,6 +54,12 @@ async function getShowsByTerm(searchInput) {
     // filteredShow.set("image", `${show.show.image}`);
     // return filteredShow;
   });
+
+  // Using destructuring
+  // const filteredShowsData = searchData.map((searchResult) => {
+  //   const {id, name, summary, image} = searchResult.show;
+  //   return {id, name, summary, image};
+  // })
 
   return filteredShows;
 }
