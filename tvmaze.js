@@ -2,6 +2,7 @@
 
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
+const $episodesList = $("#episodesList");
 const $searchForm = $("#searchForm");
 const BASE_URL = "http://api.tvmaze.com/";
 const NO_SHOW_IMG = "https://tinyurl.com/tv-missing";
@@ -139,9 +140,27 @@ async function getEpisodesOfShow(showId) {
  }
 
 
+/** Provided an array of episodes info, populate into the #episodesList part of the DOM. 
+ * The episode list is a <ul> -- this is already in HTML
+ * Each episode is an <li>, e.g. '<li>Pilot (season 1, number 1)</li>'
+ * Create individual episodes, and append each to the episode list.
+ * Reveal the #episodesArea section
+*/
 
-/** Write a clear docstring for this function... */
-
-// function displayEpisodes(episodes) { }
+function displayEpisodes(episodes) { 
+  console.log('episodes: ', episodes);
+  //iterate over the array of episodes info
+  for (let episode of episodes) {
+    //create a <li>,
+    const {name, season, number} = episode;
+    const $episode = $("<li>");
+    $episode.text(`${name} (season ${season}, number ${number})`).appendTo($episodesList);
+    //inner text - `${episode}(season ${season}, number ${number})`
+    //append it to the episode list
+    console.log($episode);
+  }
+  //reveal the episodes area
+  $episodesArea.show();
+}
 
 // add other functions that will be useful / match our structure & design
