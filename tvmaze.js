@@ -119,17 +119,18 @@ $searchForm.on("submit", async function handleSearchForm (evt) {
  */
 
 async function getEpisodesOfShow(showId) {
+  //TODO: Refactor filteredEpisodes name and use of const vs let
   // http://api.tvmaze.com/shows/[showid]/episodes << GET request
   //test 55110
   //http://api.tvmaze.com/shows/55110/episodes
   //fetch the show with the corres. id
   console.log('showId: ', showId);
   let response = await fetch(`${BASE_URL}shows/${showId}/episodes`, {method: "GET"});
-  let searchData = await response.json();
+  let episodesData = await response.json();
   //should return array of objects [{id: , name: , summary: , image: }];
-  const filteredEpisodes = searchData.map((searchResult) => {
-    let {id, name, season, number} = searchResult;
-    //turn season and number into string
+  const filteredEpisodes = episodesData.map(({id, name, season, number}) => {
+    // let {id, name, season, number} = searchResult;
+    // turn season and number into string
     number = number.toString();
     season = season.toString();
     return {id, name, season, number};
@@ -140,21 +141,24 @@ async function getEpisodesOfShow(showId) {
  }
 
 
-/** Provided an array of episodes info, populate into the #episodesList part of the DOM. 
+/** Provided an array of episodes info, populate into the #episodesList part of the DOM.
  * The episode list is a <ul> -- this is already in HTML
  * Each episode is an <li>, e.g. '<li>Pilot (season 1, number 1)</li>'
  * Create individual episodes, and append each to the episode list.
  * Reveal the #episodesArea section
 */
 
-function displayEpisodes(episodes) { 
+function displayEpisodes(episodes) {
+  $episodesList.empty();
   console.log('episodes: ', episodes);
   //iterate over the array of episodes info
   for (let episode of episodes) {
     //create a <li>,
     const {name, season, number} = episode;
     const $episode = $("<li>");
-    $episode.text(`${name} (season ${season}, number ${number})`).appendTo($episodesList);
+    $episode
+      .text(`${name} (season ${season}, number ${number})`)
+      .appendTo($episodesList);
     //inner text - `${episode}(season ${season}, number ${number})`
     //append it to the episode list
     console.log($episode);
@@ -163,4 +167,18 @@ function displayEpisodes(episodes) {
   $episodesArea.show();
 }
 
-// add other functions that will be useful / match our structure & design
+/** getEpisodesAndDisplay has showID input and invokes getEpisodes and
+ * dislayEpisodes functions */
+
+async function getEpisodesOfShowAndDisplay (showID) {
+  const episodes = await getEpisodesOfShow(showID);
+  displayEpisodes(episodes);
+}
+
+/** Event handler on showsList area to delegate an event handler to recognize
+ * and clicks on episode clicks
+ */
+$showsList.on("click", "button", function(event) {
+  const showID = $(this).closest(".Show").attr("data-show-id");
+  getEpisodesOfShowAndDisplay(showID);
+})
