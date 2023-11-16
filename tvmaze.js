@@ -27,6 +27,8 @@ async function getShowsByTerm(searchInput) {
 
   let searchData = await response.json();
 
+  //TODO: How to handle other properties that don't have any inputs
+
   const filteredShows =   searchData.map((show) => {
     const filteredShow = {};
     filteredShow.id = show.show.id;
