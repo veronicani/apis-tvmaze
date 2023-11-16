@@ -3,8 +3,8 @@
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
-const BASE_URL = 'http://api.tvmaze.com/';
-
+const BASE_URL = "http://api.tvmaze.com/";
+const NO_SHOW_IMG = "https://tinyurl.com/tv-missing";
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -12,13 +12,13 @@ const BASE_URL = 'http://api.tvmaze.com/';
  *    Each show object should contain exactly: {id, name, summary, image}
  *    (if no image URL given by API, put in a default image URL)
  */
-//TODO: Rename param as WHAT the param is in this case, such as searchTerm
-async function getShowsByTerm(searchInput) {
+
+async function getShowsByTerm(searchTerm) {
   // ADD: Remove placeholder & make request to TVMaze search shows API.
 
   //http://api.tvmaze.com/search/shows?q=[searchquery] << format to take input from user
   //fetch the show, passing in url, make sure to reformat
-  const searchParams = new URLSearchParams({q: searchInput});
+  const searchParams = new URLSearchParams({q: searchTerm});
 
   let response = await fetch(`${BASE_URL}/search/shows?${searchParams}`,
     {method: "GET"}
@@ -28,21 +28,19 @@ async function getShowsByTerm(searchInput) {
   let searchData = await response.json();
 
   /**TODO: How to handle other properties that don't have any inputs
-   * Also new name for the parameter within the map function callback
-   * Can make the image url a global constant
    * Can make object definition within map idiom by using destructuring (see
    * commented out code starting this)
   */
 
-  const filteredShows =   searchData.map((show) => {
+  const filteredShows =   searchData.map((searchResult) => {
     const filteredShow = {};
-    filteredShow.id = show.show.id;
-    filteredShow.name = show.show.name;
-    filteredShow.summary = show.show.summary;
-    if(show.show.image === null) {
-      filteredShow.image = "https://tinyurl.com/tv-missing";
+    filteredShow.id = searchResult.show.id;
+    filteredShow.name = searchResult.show.name;
+    filteredShow.summary = searchResult.show.summary;
+    if(searchResult.show.image === null) {
+      filteredShow.image = NO_SHOW_IMG;
     } else {
-      filteredShow.image = show.show.image.medium;
+      filteredShow.image = searchResult.show.image.medium;
     }
     return filteredShow;
 
@@ -119,8 +117,27 @@ $searchForm.on("submit", async function handleSearchForm (evt) {
  *      { id, name, season, number }
  */
 
-// async function getEpisodesOfShow(id) { }
-// http://api.tvmaze.com/shows/[showid]/episodes << GET request
+async function getEpisodesOfShow(showId) {
+  // http://api.tvmaze.com/shows/[showid]/episodes << GET request
+  //test 55110
+  //http://api.tvmaze.com/shows/55110/episodes
+  //fetch the show with the corres. id
+  console.log('showId: ', showId);
+  let response = await fetch(`${BASE_URL}shows/${showId}/episodes`, {method: "GET"});
+  let searchData = await response.json();
+  //should return array of objects [{id: , name: , summary: , image: }];
+  const filteredEpisodes = searchData.map((searchResult) => {
+    let {id, name, season, number} = searchResult;
+    //turn season and number into string
+    number = number.toString();
+    season = season.toString();
+    return {id, name, season, number};
+  });
+
+  console.log('filteredEpisodes: ', filteredEpisodes);
+  return filteredEpisodes;
+ }
+
 
 
 /** Write a clear docstring for this function... */
